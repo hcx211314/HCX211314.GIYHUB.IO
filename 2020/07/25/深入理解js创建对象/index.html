@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>深入理解js创建对象 | 魏龙龙的个人博客</title><meta name="description" content="Object构造函数    12var person &#x3D; new Object()person.name &#x3D; &#39;张三&#39; 缺点：使用同一个接口创建很多对象，会产生大量的重复代码  对象字面量  1var person &#x3D; &amp;#123; name:&#39;zhangsan&#39; &amp;#125; 缺点：同Object构造函数。使用用一个接口创建很多对象"><meta name="keywords" content="JavaScript"><meta name="author" content="魏龙龙"><meta name="copyright" content="魏龙龙"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="http://weilonglong.top/2020/07/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3js%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta name="google-site-verification" content="content"/><meta name="msvalidate.01" content="content"/><meta name="baidu-site-verification" content="content"/><meta name="360-site-verification" content="content"/><meta property="og:type" content="article"><meta property="og:title" content="深入理解js创建对象"><meta property="og:url" content="http://weilonglong.top/2020/07/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3js%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/"><meta property="og:site_name" content="魏龙龙的个人博客"><meta property="og:description" content="Object构造函数    12var person &#x3D; new Object()person.name &#x3D; &#39;张三&#39; 缺点：使用同一个接口创建很多对象，会产生大量的重复代码  对象字面量  1var person &#x3D; &amp;#123; name:&#39;zhangsan&#39; &amp;#125; 缺点：同Object构造函数。使用用一个接口创建很多对象"><meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><meta property="article:published_time" content="2020-07-25T14:27:21.000Z"><meta property="article:modified_time" content="2020-07-27T15:42:32.602Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="prev" title="ES6Promise" href="http://weilonglong.top/2020/07/25/ES6Promise/"><link rel="next" title="morgan中间件记录日志" href="http://weilonglong.top/2020/07/25/morgan%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: false,
+  copyright: {"languages":{"author":"作者: 魏龙龙","link":"链接: ","source":"来源: 魏龙龙的个人博客","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: true,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: false
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="魏龙龙的个人博客" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">31</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">魏龙龙的个人博客</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">深入理解js创建对象</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2020-07-25 22:27:21"><i class="far fa-calendar-alt fa-fw"></i> 发表于 2020-07-25</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-07-27 23:42:32"><i class="fas fa-history fa-fw"></i> 更新于 2020-07-27</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><ol>
+<li>Object构造函数</li>
+</ol>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Object()</span><br><span class="line">person.name &#x3D; &#39;张三&#39;</span><br></pre></td></tr></table></figure>
+<p>缺点：使用同一个接口创建很多对象，会产生大量的重复代码</p>
+<ol start="2">
+<li>对象字面量</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; &#123; name:&#39;zhangsan&#39; &#125;</span><br></pre></td></tr></table></figure>
+<p>缺点：同Object构造函数。使用用一个接口创建很多对象，会产生大量的重复代码</p>
+<ol start="3">
+<li>Object.create方式</li>
+</ol>
+<p>Object.create()方法会使用指定的原型对象及其属性去创建一个新的对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var Person &#x3D; &#123;</span><br><span class="line">    name :&#39;zhangsan&#39;</span><br><span class="line">    sayName: function()&#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">var person1 &#x3D; Object.create(Person)</span><br><span class="line">var person2 &#x3D; Object.create(Person)</span><br><span class="line">person1.sayName() &#x2F;&#x2F; &#39;zhangsan&#39;</span><br><span class="line">person1.sayName &#x3D;&#x3D;&#x3D; person2.sayName &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+<p>优点：单例继承，语法简单。<br>缺点：封装性不好，多实例需要重复初始化过程。</p>
+<ol start="4">
+<li>工厂模式</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function createPerson(name)&#123;</span><br><span class="line">    var o &#x3D; new Object()</span><br><span class="line">    o.name &#x3D; name</span><br><span class="line">    o.sayName &#x3D; function()&#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">    return o</span><br><span class="line">&#125;</span><br><span class="line">var person1 &#x3D; createPerson(&#39;张三&#39;)</span><br><span class="line">var person2 &#x3D; createPerson(&#39;李四&#39;)</span><br></pre></td></tr></table></figure>
+<p>优点：实现函数封装，无数次调用，都返回一个对象。<br>缺点：无法识别对象，因为所有实例的constructor都指向Object。</p>
+<ol start="5">
+<li>构造函数模式</li>
+</ol>
+<p>构造函数模式：通过new关键字方式调用。<br>在构造函数内部，也就是被调用的函数内 this指向新创建的对象Object。这个新创建的对象的prototype被指向到构造函数的prototype。<br>如果被调用的函数没有显示的return表达式，则隐式的会返回this对象，也就是新创建的对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function Person(name)&#123;</span><br><span class="line">    this.name &#x3D; name</span><br><span class="line">    this.sayName &#x3D; function()&#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">var person1 &#x3D; new Person(&#39;张三&#39;)</span><br><span class="line">var person2 &#x3D; new Person(&#39;李四&#39;)</span><br><span class="line">person1.sayName &#x3D;&#x3D;&#x3D; person2.sayName &#x2F;&#x2F; false</span><br></pre></td></tr></table></figure>
+<p>优点：通过constructor或者instanceof可以识别对象实例的类别。<br>缺点：浪费内存。每个方法都要在每个实例上重新创建一遍。</p>
+<ul>
+<li>原型模式</li>
+</ul>
+<p>原型（prototype）：每个函数对象都有一个prototype属性，这个属性指向函数的原型对象。原型对象（Person.prototype）是构造函数（Person）的一个实例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function Person()&#123;&#125;</span><br><span class="line">Person.prototype.name &#x3D; &#39;张三&#39;</span><br><span class="line">Person.prototype.sayName &#x3D; function()&#123;</span><br><span class="line">    console.log(this.name)</span><br><span class="line">&#125;</span><br><span class="line">var person1 &#x3D; new Person()</span><br><span class="line">person1.sayName() &#x2F;&#x2F; 张三</span><br><span class="line"></span><br><span class="line">var Person2 &#x3D; new Person()</span><br><span class="line">person2.sayName() &#x2F;&#x2F; 张三</span><br><span class="line"></span><br><span class="line">person1.sayName &#x3D;&#x3D;&#x3D; person2.sayName &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+<p>优点：</p>
+<ul>
+<li>通过prototype添加的属性和放大所有实例共享。</li>
+<li>可以动态的添加原型对象的属性和方法，并直接反映到实例上<br>缺点：</li>
+<li>实例无法重写原型中的值</li>
+<li>访问实例的某个属性时，会先搜索对象实例本身，如果对象实例中具有给定名字的属性，则返回该属性的值；如果没有找到，则继续搜索指针指向的原型对象，如果在原型对象中找到该属性，则返回该属性的值。</li>
+</ul>
+<ul>
+<li>构造函数和原型的组合模式</li>
+</ul>
+<p>构造函数模式用于定义实例模式，而原型模式用于定于方法和共享的属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">function Person(name)&#123;</span><br><span class="line">    this.name &#x3D; name</span><br><span class="line">    this.friends &#x3D; [&#39;张三&#39;, &#39;李四&#39;]</span><br><span class="line">&#125;</span><br><span class="line">Person.prototype &#x3D; &#123;</span><br><span class="line">    constructor: Person, &#x2F;&#x2F; 手动将constructor指向Person，否则constuctor将指向Object</span><br><span class="line">    sayName: function()&#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person1 &#x3D; new Person(&quot;one&quot;)</span><br><span class="line">var person2 &#x3D; new Person(&quot;two&quot;)</span><br><span class="line"></span><br><span class="line">person1.friends.push(&quot;王五&quot;)</span><br><span class="line"></span><br><span class="line">person1.friends &#x2F;&#x2F; [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]</span><br><span class="line">person2.friends &#x2F;&#x2F; [&quot;张三&quot;, &quot;李四&quot;]</span><br><span class="line">person1.friends &#x3D;&#x3D;&#x3D; person2.friends &#x2F;&#x2F; false</span><br><span class="line">person1.sayName &#x3D;&#x3D;&#x3D; person2.sayName &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+<p>优点：是使用最广泛、认同度最高的一种创建自定义类型的方法。</p>
+<ul>
+<li>每个实例都会有自己的一份实例属性的副本，但同时又共享着对方法引用，最大限度地节省了内存；</li>
+<li>支持向构造函数传递参数。</li>
+</ul>
+<p>缺点：缺乏更好的封装性</p>
+<ul>
+<li>动态原型模式</li>
+</ul>
+<p>动态原型密匙将所有信息都封装在了构造函数中，初始化的时候，通过检测某个应该存在的方法时候有效，来决定是否需要初始化原型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function Person(name)&#123;</span><br><span class="line">    this.name &#x3D; name</span><br><span class="line">    if (typeof this.sayName !&#x3D;&#x3D; &quot;function&quot;)&#123;</span><br><span class="line">        Person.prototype.sayName &#x3D; function() &#123;</span><br><span class="line">            console.log(this.name)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person(&quot;a&quot;)</span><br><span class="line">person.sayName()</span><br></pre></td></tr></table></figure>
+<p>优点：</p>
+<ul>
+<li>仅在需要的时候初始化原型，节省内存；</li>
+<li>对原型所做的修改，都能立即在所有实例中得到反映。<br>缺点： —–<br>注意：使用动态原型模式时，不能使用对象字面量重写原型。因为，如果在已经创建了实例的情况下重写原型，那么就会切断现有实例与新原型之间的关系。</li>
+</ul>
+<ul>
+<li>寄生构造模式</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function Person(name)&#123;</span><br><span class="line">    var o &#x3D; new Object()</span><br><span class="line">    o.name &#x3D; name</span><br><span class="line">    o.sayName &#x3D; function()&#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">    return o</span><br><span class="line">&#125;</span><br><span class="line">var person &#x3D; new Person(&quot;a&quot;)</span><br><span class="line">person.sayName() &#x2F;&#x2F; a</span><br></pre></td></tr></table></figure>
+<p>优点：在上面的几种模式都不适用的时候，可以使用该方法。比如：创建一个具有额外方法的特殊数组，由于不能直接修改Array构造函数，可以使用这个模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function SpecialArray() &#123;</span><br><span class="line">    var Array &#x3D; new Array()</span><br><span class="line">    arr.push.apply(array,arguments)</span><br><span class="line">    arr.toPipedString &#x3D; function()&#123;</span><br><span class="line">        return this.join(&quot;|&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    return array</span><br><span class="line">&#125;</span><br><span class="line">colors &#x3D; new SpecialArray(&quot;red&quot;,&quot;blue&quot;,&quot;green&quot;)</span><br><span class="line">colors.toPipedString() &#x2F;&#x2F; &quot;red|blue|green&quot;</span><br></pre></td></tr></table></figure>
+<p>缺点：无法使用instanceof来识别对象所属类型</p>
+<ul>
+<li>稳妥构造函数模式<br>稳妥对象：</li>
+</ul>
+<ul>
+<li>没有公共属性，而且其方法也不引用this的对象</li>
+<li>最合适在一些安全的环境中（这些环境中会禁止使用this和new），或者在防止数据被其他应用程序改动时使用。</li>
+</ul>
+<p>稳妥构造函数和寄生构造函数的区别：</p>
+<ul>
+<li>新创建对象的实例方法不引用this</li>
+<li>不适用new操作符调用构造函数<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function Person(name)&#123;</span><br><span class="line">    var o&#x3D; new Object()</span><br><span class="line">    o.sayName &#x3D; function() &#123;</span><br><span class="line">        console.log(name)</span><br><span class="line">    &#125;</span><br><span class="line">    retur o </span><br><span class="line">&#125;</span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line">person.sayName()</span><br></pre></td></tr></table></figure>
+优点：非常适合在某些安全执行环境下使用<br>缺点：无法使用instance来识别对象所属类型</li>
+</ul>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">魏龙龙</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://weilonglong.top/2020/07/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3js%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/">http://weilonglong.top/2020/07/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3js%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://weilonglong.top" target="_blank">魏龙龙的个人博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JavaScript/">JavaScript</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/07/25/ES6Promise/"><img class="prev-cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ES6Promise</div></div></a></div><div class="next-post pull-right"><a href="/2020/07/25/morgan%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/"><img class="next-cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">morgan中间件记录日志</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/06/11/15个必须知道的数组方法/" title="15个必须知道的数组方法"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-11</div><div class="relatedPosts_title">15个必须知道的数组方法</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/25/ES11/" title="ES11"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-25</div><div class="relatedPosts_title">ES11</div></div></a></div><div class="relatedPosts_item"><a href="/2020/06/09/Date对象的方法/" title="Date对象的方法"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-09</div><div class="relatedPosts_title">Date对象的方法</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/25/ES6新特性/" title="ES6新特性"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-25</div><div class="relatedPosts_title">ES6新特性</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/25/对象的方法/" title="对象的方法"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-25</div><div class="relatedPosts_title">对象的方法</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/25/常见代码手写部分/" title="常见代码手写部分"><img class="relatedPosts_cover" data-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-25</div><div class="relatedPosts_title">常见代码手写部分</div></div></a></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By 魏龙龙</div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" title="缩小字体"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="简繁转换">繁</button><button id="darkmode" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="设置"><i class="fas fa-cog"></i></button><button id="go-up" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="/js/search/local-search.js"></script></body></html>
